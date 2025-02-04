@@ -12,6 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {  UserButton } from '@clerk/nextjs';
 
 export const Navbar = () => {
   const { cartCount } = useCart();  // Get the cart count from the context
@@ -45,7 +46,7 @@ export const Navbar = () => {
         {/* Icons */}
         <div className="hidden md:flex items-center gap-4">
           <Button variant="outline" size="icon" className="rounded-full">
-            <User />
+           <UserButton/>
           </Button>
           <Link href="/wishlist">
             <Button variant="outline" size="icon" className="rounded-full relative">
@@ -72,6 +73,7 @@ export const Navbar = () => {
           <Button variant="outline" size="icon" className="rounded-full">
             <Search />
           </Button>
+
         </div>
 
         {/* Mobile Navigation */}
@@ -130,3 +132,6 @@ export const Navbar = () => {
 };
 
 export default Navbar;
+
+
+
