@@ -12,7 +12,7 @@ export default function Checkout() {
     firstName: "",
     lastName: "",
     streetAddress: "",
-    zipCode : "",
+    zipCode: "",
     apartment: "",
     city: "",
     phoneNumber: "",
@@ -44,7 +44,33 @@ export default function Checkout() {
   if (cart.length === 0)
     return <p className="text-black text-3xl font-bold text-center p-16">Your cart is empty.</p>;
 
-  const totalPrice = cart.reduce((acc: any, item: any) => acc + parseFloat(item.price) * item.quantity, 0);
+  const totalPrice = cart.reduce(
+    (acc: any, item: any) => acc + parseFloat(item.price) * item.quantity,
+    0
+  );
+  const amountInCents = Math.round(totalPrice); // Stripe requires amount in cents
+
+  const handleStripePayment = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: amountInCents }),
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url; // Redirect to Stripe checkout page
+      } else {
+        alert("Failed to initiate payment");
+      }
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert("Something went wrong. Please try again.");
+    }
+    setLoading(false);
+  };
 
   const handlePlaceOrder = async () => {
     if (!isFormValid) {
@@ -68,23 +94,20 @@ export default function Checkout() {
       orderDate: new Date().toISOString(),
     };
 
-
     try {
       const response = await client.create(orderData);
-      if (response._id){
+      if (response._id) {
         clearCart();
-        alert("Your Order Has Placed Successfully")
+        alert("Your Order Has Placed Successfully");
       } else {
-        alert("Failed to place order , PLease Try Again")
+        alert("Failed to place order, Please Try Again");
       }
-    } catch (error){
-      console.error("Error Placing Order :", error);
-      alert(" Failed to place order , PLease Try Again")
+    } catch (error) {
+      console.error("Error Placing Order:", error);
+      alert("Failed to place order, Please Try Again");
     }
     setLoading(false);
-      }
-      
-    
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">
@@ -172,16 +195,6 @@ export default function Checkout() {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
                 />
               </div>
-              <div className="flex items-center">
-                <input
-                  id="saveInfo"
-                  type="checkbox"
-                  className="h-4 w-4 text-gray-600 border-gray-300 rounded focus:ring-gray-500"
-                />
-                <label htmlFor="saveInfo" className="ml-2 text-sm text-gray-700">
-                  Save this information for faster check-out next time
-                </label>
-              </div>
             </form>
           </div>
 
@@ -207,15 +220,13 @@ export default function Checkout() {
               <h3 className="text-xl font-semibold mb-2">Payment Methods</h3>
               <div className="space-y-3">
                 <div className="flex items-center">
-                  <input
-                    id="bank"
-                    type="radio"
-                    name="paymentMethod"
-                    className="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500"
-                  />
-                  <label htmlFor="bank" className="ml-2 text-md text-gray-700">
-                    Bank Transfer
-                  </label>
+                  <button
+                    onClick={handleStripePayment}
+                    className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
+                    disabled={loading || cart.length === 0}
+                  >
+                    {loading ? "Processing..." : "Pay with Stripe"}
+                  </button>
                 </div>
                 <div className="flex items-center">
                   <input
@@ -231,10 +242,6 @@ export default function Checkout() {
               </div>
             </div>
 
-            <p className="text-gray-600 mb-6 font-bold text-md">
-              Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy.
-            </p>
-
             <button
               onClick={handlePlaceOrder}
               className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 focus:outline-none"
@@ -243,16 +250,8 @@ export default function Checkout() {
               {loading ? "Placing Order..." : "Place Order"}
             </button>
           </div>
-            
         </div>
-        <div className="text-center mt-10">
-       <img src="nero.png.png" alt="pic"  width={2000}
-          height={700}>
-</img>
-      </div>
       </div>
     </div>
   );
-
 }
-

@@ -50,3 +50,5 @@ const ShopClient = ({ products, productsPerPage, totalPages }: { products: Produ
 };
 
 export default ShopClient;
+
+

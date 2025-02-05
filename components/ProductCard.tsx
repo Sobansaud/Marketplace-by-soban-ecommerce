@@ -8,7 +8,7 @@ interface Product {
   title: string;
   description: string;
   price: number;
-  discountPercentage?: number;
+  dicountPercentage?: number;
   isNew?: boolean;
   tags: string[];
   imageUrl: string;
@@ -32,9 +32,9 @@ const ProductCard = ({ product }: { product: Product }) => {
               New
             </span>
           )}
-          {product.discountPercentage && (
+          {product.dicountPercentage && (
             <span className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 text-xs font-semibold rounded-full">
-              -{product.discountPercentage}%
+              -{product.dicountPercentage}%
             </span>
           )}
         </div>
@@ -50,11 +50,11 @@ const ProductCard = ({ product }: { product: Product }) => {
           <span className="text-xl font-extrabold text-blue-600">
             ${product.price.toFixed(2)}
           </span>
-          {product.discountPercentage && (
+          {product.dicountPercentage && (
             <span className="text-sm text-gray-500 line-through">
               ${(
                 product.price /
-                (1 - product.discountPercentage / 100)
+                (1 - product.dicountPercentage / 100)
               ).toFixed(2)}
             </span>
           )}
@@ -71,6 +71,8 @@ const ProductCard = ({ product }: { product: Product }) => {
             </span>
           ))}
         </div>
+
+
 
         {/* Add to Wishlist Button */}
         <div className="mt-6 text-center">

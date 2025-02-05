@@ -13,7 +13,6 @@ interface Product {
   imageUrl: string;
 }
 
-// Server-side data fetching (Server Component)
 const ShopPage = async () => {
   const query = `
     *[_type == "product"]{
@@ -21,7 +20,7 @@ const ShopPage = async () => {
       title,
       description,
       price,
-      discountPercentage,
+      dicountPercentage,
       isNew,
       tags,
       "imageUrl": productImage.asset->url
